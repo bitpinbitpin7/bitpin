@@ -1,21 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Decimal } from "decimal.js";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  SwipeableTabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { useMarkets } from "@/hooks/useMarkets";
 import { Market } from "@/types/api";
 
 export default function MarketsPage() {
   const router = useRouter();
-  const BASE_MARKETS = ["IRT", "USDT"];
+  const BASE_MARKETS = ["IRT", "USDT"] as const;
+  type Tab = (typeof BASE_MARKETS)[number];
+  const [activeTab, setActiveTab] = useState<Tab>("IRT");
 
   const { data: markets, isLoading, isError } = useMarkets();
 
   const handleMarketSelect = (market: Market) => {
     router.push(`/orders/${market.id}`);
+  };
+
+  const handleSwipeLeft = () => {
+    switch (activeTab) {
+      case "IRT":
+        setActiveTab("USDT");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSwipeRight = () => {
+    switch (activeTab) {
+      case "USDT":
+        setActiveTab("IRT");
+        break;
+      default:
+        break;
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -24,7 +51,12 @@ export default function MarketsPage() {
 
   return (
     <div className="p-4">
-      <Tabs defaultValue={BASE_MARKETS[0]}>
+      <SwipeableTabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as Tab)}
+        onSwipeLeft={handleSwipeLeft}
+        onSwipeRight={handleSwipeRight}
+      >
         <TabsList className="bg-secondary">
           {BASE_MARKETS.map((baseMarket) => (
             <TabsTrigger
@@ -66,7 +98,7 @@ export default function MarketsPage() {
               ))}
           </TabsContent>
         ))}
-      </Tabs>
+      </SwipeableTabs>
     </div>
   );
 }

@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  SwipeableTabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Decimal } from "decimal.js";
 import { calculateOrderStats } from "@/lib/orderCalculation";
@@ -12,7 +17,9 @@ export default function OrdersPage() {
   const router = useRouter();
   const { marketId } = useParams<{ marketId: string }>();
   const [percentageInput, setPercentageInput] = useState<string>("");
-  const [activeTab, setActiveTab] = useState<string>("orders");
+  const TABS = ["orders", "buy", "sell"] as const;
+  type Tab = (typeof TABS)[number];
+  const [activeTab, setActiveTab] = useState<Tab>("orders");
 
   const { data: orders, error, isLoading } = useOrders(marketId);
 
@@ -24,6 +31,32 @@ export default function OrdersPage() {
     percentageInput && activeTab === "sell" && orders
       ? calculateOrderStats(orders.sell, percentageInput)
       : null;
+
+  const handleSwipeLeft = () => {
+    switch (activeTab) {
+      case "orders":
+        setActiveTab("buy");
+        break;
+      case "buy":
+        setActiveTab("sell");
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSwipeRight = () => {
+    switch (activeTab) {
+      case "sell":
+        setActiveTab("buy");
+        break;
+      case "buy":
+        setActiveTab("orders");
+        break;
+      default:
+        break;
+    }
+  };
 
   if (!marketId || isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -50,10 +83,11 @@ export default function OrdersPage() {
         />
       </div>
 
-      <Tabs
-        defaultValue="orders"
-        className="w-full"
-        onValueChange={setActiveTab}
+      <SwipeableTabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as Tab)}
+        onSwipeLeft={handleSwipeLeft}
+        onSwipeRight={handleSwipeRight}
       >
         <TabsList className="bg-secondary">
           <TabsTrigger
@@ -201,7 +235,7 @@ export default function OrdersPage() {
             </table>
           </div>
         </TabsContent>
-      </Tabs>
+      </SwipeableTabs>
     </div>
   );
 }
