@@ -33,7 +33,7 @@ export default function OrdersPage() {
     <div className="p-4">
       <button
         onClick={() => router.push("/")}
-        className="mb-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        className="mb-4 px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
       >
         ← Back to Markets
       </button>
@@ -46,7 +46,7 @@ export default function OrdersPage() {
           onChange={(e) => setPercentageInput(e.target.value)}
           min="1"
           max="100"
-          className="max-w-xs"
+          className="max-w-xs bg-background text-foreground"
         />
       </div>
 
@@ -55,32 +55,50 @@ export default function OrdersPage() {
         className="w-full"
         onValueChange={setActiveTab}
       >
-        <TabsList>
-          <TabsTrigger value="orders">All Orders</TabsTrigger>
-          <TabsTrigger value="buy">Buy Orders</TabsTrigger>
-          <TabsTrigger value="sell">Sell Orders</TabsTrigger>
+        <TabsList className="bg-secondary">
+          <TabsTrigger
+            value="orders"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            All Orders
+          </TabsTrigger>
+          <TabsTrigger
+            value="buy"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Buy Orders
+          </TabsTrigger>
+          <TabsTrigger
+            value="sell"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+          >
+            Sell Orders
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="orders">
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr>
-                  <th className="p-2 border">Time</th>
-                  <th className="p-2 border">Price</th>
-                  <th className="p-2 border">Amount</th>
+                <tr className="bg-secondary">
+                  <th className="p-2 border border-border">Time</th>
+                  <th className="p-2 border border-border">Price</th>
+                  <th className="p-2 border border-border">Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.trades.map((trade, index) => (
-                  <tr key={index}>
-                    <td className="p-2 border">
+                  <tr
+                    key={index}
+                    className="hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="p-2 border border-border">
                       {new Date(trade.time * 1000).toLocaleTimeString()}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(trade.price).toFixed(2)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(trade.match_amount).toFixed(8)}
                     </td>
                   </tr>
@@ -94,22 +112,25 @@ export default function OrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr>
-                  <th className="p-2 border">Price</th>
-                  <th className="p-2 border">Remaining</th>
-                  <th className="p-2 border">Value</th>
+                <tr className="bg-secondary">
+                  <th className="p-2 border border-border">Price</th>
+                  <th className="p-2 border border-border">Remaining</th>
+                  <th className="p-2 border border-border">Value</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.buy.map((order, index) => (
-                  <tr key={index}>
-                    <td className="p-2 border">
+                  <tr
+                    key={index}
+                    className="hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="p-2 border border-border">
                       {new Decimal(order.price).toFixed(2)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(order.remain).toFixed(8)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(order.value).toFixed(2)}
                     </td>
                   </tr>
@@ -117,14 +138,14 @@ export default function OrdersPage() {
               </tbody>
               {buyStats && (
                 <tfoot>
-                  <tr className="font-bold">
-                    <td className="p-2 border">
+                  <tr className="font-bold bg-secondary">
+                    <td className="p-2 border border-border">
                       Average: {buyStats.avgPrice.toFixed(2)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       Total: {buyStats.totalRemain.toFixed(8)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       Total: {buyStats.totalValue.toFixed(2)}
                     </td>
                   </tr>
@@ -138,22 +159,25 @@ export default function OrdersPage() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
-                <tr>
-                  <th className="p-2 border">Price</th>
-                  <th className="p-2 border">Remaining</th>
-                  <th className="p-2 border">Value</th>
+                <tr className="bg-secondary">
+                  <th className="p-2 border border-border">Price</th>
+                  <th className="p-2 border border-border">Remaining</th>
+                  <th className="p-2 border border-border">Value</th>
                 </tr>
               </thead>
               <tbody>
                 {orders.sell.map((order, index) => (
-                  <tr key={index}>
-                    <td className="p-2 border">
+                  <tr
+                    key={index}
+                    className="hover:bg-accent/50 transition-colors"
+                  >
+                    <td className="p-2 border border-border">
                       {new Decimal(order.price).toFixed(2)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(order.remain).toFixed(8)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       {new Decimal(order.value).toFixed(2)}
                     </td>
                   </tr>
@@ -161,14 +185,14 @@ export default function OrdersPage() {
               </tbody>
               {sellStats && (
                 <tfoot>
-                  <tr className="font-bold">
-                    <td className="p-2 border">
+                  <tr className="font-bold bg-secondary">
+                    <td className="p-2 border border-border">
                       Average: {sellStats.avgPrice.toFixed(2)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       Total: {sellStats.totalRemain.toFixed(8)}
                     </td>
-                    <td className="p-2 border">
+                    <td className="p-2 border border-border">
                       Total: {sellStats.totalValue.toFixed(2)}
                     </td>
                   </tr>

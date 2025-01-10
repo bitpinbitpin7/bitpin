@@ -25,9 +25,13 @@ export default function MarketsPage() {
   return (
     <div className="p-4">
       <Tabs defaultValue={BASE_MARKETS[0]}>
-        <TabsList>
+        <TabsList className="bg-secondary">
           {BASE_MARKETS.map((baseMarket) => (
-            <TabsTrigger value={baseMarket} key={baseMarket}>
+            <TabsTrigger
+              value={baseMarket}
+              key={baseMarket}
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+            >
               {baseMarket} Markets
             </TabsTrigger>
           ))}
@@ -44,13 +48,17 @@ export default function MarketsPage() {
               .map((market) => (
                 <Card
                   key={market.id}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="cursor-pointer bg-background hover:bg-accent transition-colors"
                   onClick={() => handleMarketSelect(market)}
                 >
                   <CardContent className="p-4">
-                    <h3 className="font-bold">{market.currency1.title}</h3>
-                    <p>Last Price: {new Decimal(market.price).toFixed(2)}</p>
-                    <p>
+                    <h3 className="font-bold text-primary">
+                      {market.currency1.title}
+                    </h3>
+                    <p className="text-secondary-foreground">
+                      Last Price: {new Decimal(market.price).toFixed(2)}
+                    </p>
+                    <p className="text-secondary-foreground">
                       24h Volume: {new Decimal(market.volume_24h).toFixed(2)}
                     </p>
                   </CardContent>
