@@ -1,82 +1,33 @@
 "use client";
 
-import React, { useState, useEffect, use } from "react";
+import React, { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Decimal } from "decimal.js";
-import { Order, Trade, OrderResponse } from "../../types/api";
-import { OrderStats } from "@/app/types";
 import { calculateOrderStats } from "@/lib/orderCalculation";
+import { useOrders } from "@/hooks/useOrders";
 
-interface OrdersState {
-  buy: Order[];
-  sell: Order[];
-  trades: Trade[];
-}
-
-interface PageProps {
-  params: {
-    marketId: string;
-  };
-}
-
-export default function OrdersPage({ params }: PageProps) {
+export default function OrdersPage() {
   const router = useRouter();
   const { marketId } = useParams<{ marketId: string }>();
-
-  const [orders, setOrders] = useState<OrdersState>({
-    buy: [],
-    sell: [],
-    trades: [],
-  });
   const [percentageInput, setPercentageInput] = useState<string>("");
   const [activeTab, setActiveTab] = useState<string>("orders");
 
-  useEffect(() => {
-    if (!marketId) return;
-
-    fetchOrders();
-    const interval = setInterval(fetchOrders, 3000);
-    return () => clearInterval(interval);
-  }, [marketId]);
-
-  const fetchOrders = async () => {
-    try {
-      const [buyResponse, sellResponse, tradesResponse] = await Promise.all([
-        fetch(
-          `https://api.bitpin.org/v2/mth/actives/${marketId}/?type=buy`
-        ).then((res) => res.json()) as Promise<OrderResponse>,
-        fetch(
-          `https://api.bitpin.org/v2/mth/actives/${marketId}/?type=sell`
-        ).then((res) => res.json()) as Promise<OrderResponse>,
-        fetch(`https://api.bitpin.org/v1/mth/matches/${marketId}/`).then(
-          (res) => res.json()
-        ) as Promise<Trade[]>,
-      ]);
-
-      setOrders({
-        buy: buyResponse.orders.slice(0, 10),
-        sell: sellResponse.orders.slice(0, 10),
-        trades: tradesResponse.slice(0, 10),
-      });
-    } catch (error) {
-      console.error("Error fetching orders:", error);
-    }
-  };
+  const { data: orders, error, isLoading } = useOrders(marketId);
 
   const buyStats =
-    percentageInput && activeTab === "buy"
+    percentageInput && activeTab === "buy" && orders
       ? calculateOrderStats(orders.buy, percentageInput)
       : null;
   const sellStats =
-    percentageInput && activeTab === "sell"
+    percentageInput && activeTab === "sell" && orders
       ? calculateOrderStats(orders.sell, percentageInput)
       : null;
 
-  if (!marketId) {
-    return <div>Loading...</div>;
-  }
+  if (!marketId || isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!orders) return <div>No orders found.</div>;
 
   return (
     <div className="p-4">

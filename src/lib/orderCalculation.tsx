@@ -1,5 +1,5 @@
-import { OrderStats } from "@/app/types";
-import { Order } from "@/app/types/api";
+import { OrderStats } from "@/types";
+import { Order } from "@/types/api";
 import { Decimal } from "decimal.js";
 
 export const calculateOrderStats = (
