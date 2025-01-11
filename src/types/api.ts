@@ -30,7 +30,6 @@ export interface Market {
   volume_24h: string;
   internal_price_info: PriceInfo;
   price_info: PriceInfo;
-  [key: string]: any;
 }
 
 export interface Order {

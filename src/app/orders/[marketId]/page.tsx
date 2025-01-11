@@ -13,12 +13,12 @@ import { Decimal } from "decimal.js";
 import { calculateOrderStats } from "@/lib/orderCalculation";
 import { useOrders } from "@/hooks/useOrders";
 
+type Tab = "orders" | "buy" | "sell";
+
 export default function OrdersPage() {
   const router = useRouter();
   const { marketId } = useParams<{ marketId: string }>();
   const [percentageInput, setPercentageInput] = useState<string>("");
-  const TABS = ["orders", "buy", "sell"] as const;
-  type Tab = (typeof TABS)[number];
   const [activeTab, setActiveTab] = useState<Tab>("orders");
 
   const { data: orders, error, isLoading } = useOrders(marketId);

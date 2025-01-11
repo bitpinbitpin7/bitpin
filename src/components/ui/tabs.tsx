@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
-import { useSwipeable, SwipeableProps } from "react-swipeable";
+import { useSwipeable } from "react-swipeable";
 
 import { cn } from "@/lib/utils";
 
